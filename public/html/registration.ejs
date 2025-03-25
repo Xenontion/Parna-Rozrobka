@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація товару</title>
+    <link rel="stylesheet" href="/css/registration.css">
+</head>
+<body>
+    <header>
+        <img src="../icons/logo.svg" alt="Logo" class="header-logo">
+        <h1>Реєстрація товару</h1>
+        <ul>
+            <li><a href="/products">Список продуктів</a></li>
+            <li><a href="/">Інструкція</a></li>
+        </ul>
+    </header>
+    <main>
+        <form action="/register-product" method="POST">
+            <div>
+                <label for="name">Назва продукту:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="price">Ціна:</label>
+                <input type="text" id="price" name="price" required>
+            </div>
+            <div>
+                <label for="quantity">Кількість:</label>
+                <input type="text" id="quantity" name="quantity" required>
+            </div>
+            <div>
+                <label for="category">Категорія:</label>
+                <input type="text" id="category" name="category" required>
+            </div>
+            <div>
+                <label for="bar_code">Штрих код товару:</label>
+                <input type="text" id="bar_code" name="bar_code" required>
+            </div>
+            <div>
+                <label for="manufacturer">Виробник:</label>
+                <input type="text" id="manufacturer" name="manufacturer" required>
+            </div>
+            <div>
+                <label for="images">Зображення (URL):</label>
+                <input type="text" id="images" name="images" required>
+            </div>
+            <button type="submit">Зареєструвати товар</button>
+        </form>
+    </main>
+    <footer>
+        <h2>Автори</h2>
+        <ul>
+            <li>Перепьолкін Олександр - <a href="mailto:oleksandr@gmail.com">oleksandr@gmail.com</a> - +380 93 163 5886</li>
+            <li>Сасько Олег - <a href="mailto:olesasko@gmail.com">olesasko@gmail.com</a> - +380 68 994 2055</li>
+        </ul>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= manufacturer.name %></title>
+    <link rel="stylesheet" href="css/manufacturers.css">
+</head>
+<body>
+    <header>
+        <a href="<%= manufacturer.link %>"><h1><%= manufacturer.name %></h1></a>
+    </header>
+    <main>
+        <div class="product_manufacturer">
+            <img src="<%= manufacturer.logo %>" alt="<%= manufacturer.name %>" class="manufacturer-logo">
+            <div class="row">
+                <div class="info-item">
+                    <img src="icons/address.png" alt="Location Icon" class="icon">
+                    <h3>Місцезнаходження</h3>
+                    <p><%= manufacturer.address %></p>
+                </div>
+                <div class="info-item">
+                    <img src="icons/telephone.png" alt="Phone Icon" class="icon">
+                    <h3>Номер телефону</h3>
+                    <p><%= manufacturer.number %></p>
+                </div>
+                <div class="info-item">
+                    <img src="icons/link.png" alt="Website Icon" class="icon">
+                    <h3>Посилання на сайт</h3>
+                    <p><a href="<%= manufacturer.link %>"><%= manufacturer.link %></a></p>
+                </div>
+                <div class="info-item">
+                    <img src="icons/email.png" alt="Email Icon" class="icon">
+                    <h3>Адреса електроної пошти</h3>
+                    <p><a href="mailto:<%= manufacturer.email %>"><%= manufacturer.email %></a></p>
+                </div>
+            </div>  
+            <h2>Опис</h2>
+            <p class="description"><%= manufacturer.description %></p>
+        </div>
+        <button onclick="window.history.back()">Назад</button>
+    </main>
+    <footer>
+        <h2>Автори</h2>
+        <ul>
+            <li>Перепьолкін Олександр - <a href="mailto:oleksandr@gmail.com">oleksandr@gmail.com</a> - +380 93 163 5886</li>
+            <li>Сасько Олег - <a href="mailto:olesasko@gmail.com">olesasko@gmail.com</a> - +380 68 994 2055</li>
+        </ul>
+    </footer>
+</body>
+</html>

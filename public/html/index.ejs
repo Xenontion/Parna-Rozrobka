@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <img src="../icons/logo.svg" alt="Logo" class="header-logo">
+        <h1>Список продуктів що підтримують Національний Кешбек</h1>
+        <ul>
+            <li><a href="/">Інструкція</a></li>
+            <li><a href="/register">Реєстрація товару</a></li>
+        </ul>
+    </header>
+    <main>
+        <div class="filter-container">
+            <label for="category-filter">Фільтр по категоріям:</label>
+            <select id="category-filter">
+                <option value="all">Все</option>
+                <option value="Сосиски">Сосиски</option>
+                <option value="Газирований напій">Газирований напій</option>
+                <option value="Консерви">Консерви</option>
+                <option value="Пельмені">Пельмені</option>
+                <option value="Масло">Масло</option>
+            </select>
+        </div>
+        <img id="toggle-view" src="icons/slide.png" alt="Toggle View" class="toggle-view-icon">
+        <img id="toggle-view-slider" src="icons/table.png" alt="Toggle View" class="toggle-view-icon" style="display: none;">
+        <div id="table-view">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Зображення</th>
+                        <th>Назва продукту</th>
+                        <th>Ціна</th>
+                        <th>Кількість</th>
+                        <th>Категорія</th>
+                        <th>Штрих код товару</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody id="product-table-body">
+                    <% products.forEach(product => { %>
+                    <tr class="clickable-row" data-href="/<%= product.manufacturer %>" data-category="<%= product.category %>">
+                        <td><img src="<%= product.images %>" alt="<%= product.name %>" class="product-image"></td>
+                        <td><%= product.name %></td>
+                        <td><%= product.price %></td>
+                        <td><%= product.quantity %></td>
+                        <td><%= product.category %></td>
+                        <td><%= product.bar_code %></td>
+                        <td><button class="delete-button" data-id="<%= product.id %>">Видалити</button></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <div id="slider-view" style="display: none;">
+            <div class="slider">
+                <button class="prev">❮</button>
+                <div class="slider-content">
+                    <% products.forEach(product => { %>
+                    <div class="slide">
+                        <a href="<%= product.manufacturer %>">
+                            <img src="<%= product.images %>" alt="<%= product.name %>" class="slider-image">
+                        </a>
+                        <div class="product-info">
+                            <h3><%= product.name %></h3>
+                            <p>Ціна: <%= product.price %></p>
+                            <p>Кількість: <%= product.quantity %></p>
+                            <p>Категорія: <%= product.category %></p>
+                            <p>Штрих код товару: <%= product.bar_code %></p>
+                            <p>Виробник: <%= product.manufacturer %></p>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+                <button class="next">❯</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <h2>Автори</h2>
+        <ul>
+            <li>Перепьолкін Олександр - <a href="mailto:oleksandr@gmail.com">oleksandr@gmail.com</a> - +380 93 163 5886</li>
+            <li>Сасько Олег - <a href="mailto:olesasko@gmail.com">olesasko@gmail.com</a> - +380 68 994 2055</li>
+        </ul>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var rows = document.querySelectorAll(".clickable-row");
+            rows.forEach(function(row) {
+                row.addEventListener("click", function() {
+                    window.location.href = row.dataset.href;
+                });
+            });
+
+            var filter = document.getElementById("category-filter");
+            filter.addEventListener("change", function() {
+                var selectedCategory = filter.value;
+                rows.forEach(function(row) {
+                    if (selectedCategory === "all" || row.dataset.category === selectedCategory) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+
+            var deleteButtons = document.querySelectorAll(".delete-button");
+            deleteButtons.forEach(function(button) {
+                button.addEventListener("click", function(event) {
+                    event.stopPropagation();
+                    var productId = button.dataset.id;
+                    fetch(`/delete-product/${productId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            button.closest("tr").remove();
+                        } else {
+                            alert("Помилка при видаленні товару");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error deleting product:", error);
+                        alert("Помилка при видаленні товару");
+                    });
+                });
+            });
+
+            var toggleViewButton = document.getElementById("toggle-view");
+            var toggleViewSliderButton = document.getElementById("toggle-view-slider");
+            var tableView = document.getElementById("table-view");
+            var sliderView = document.getElementById("slider-view");
+
+            toggleViewButton.addEventListener("click", function() {
+                tableView.style.display = "none";
+                sliderView.style.display = "block";
+                toggleViewButton.style.display = "none";
+                toggleViewSliderButton.style.display = "inline";
+            });
+
+            toggleViewSliderButton.addEventListener("click", function() {
+                tableView.style.display = "block";
+                sliderView.style.display = "none";
+                toggleViewButton.style.display = "inline";
+                toggleViewSliderButton.style.display = "none";
+            });
+
+            var slides = document.querySelectorAll(".slide");
+            var currentSlide = 0;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.style.display = i === index ? "block" : "none";
+                });
+            }
+
+            document.querySelector(".prev").addEventListener("click", function() {
+                currentSlide = (currentSlide > 0) ? currentSlide - 1 : slides.length - 1;
+                showSlide(currentSlide);
+            });
+
+            document.querySelector(".next").addEventListener("click", function() {
+                currentSlide = (currentSlide < slides.length - 1) ? currentSlide + 1 : 0;
+                showSlide(currentSlide);
+            });
+
+            showSlide(currentSlide);
+        });
+
+        function redirectToHome() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

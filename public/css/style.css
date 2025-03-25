@@ -1,0 +1,209 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #4dbeff;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Adjust the gap between the logo and the text */
+}
+
+footer {
+    background-color: rgb(255, 255, 41);
+    color: #00c3ff;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: auto;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #bbe5fe;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 2px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #dcdcdc;
+    font-weight: bold;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+a {
+    color: blue;
+}
+
+li {
+    list-style-type: none;
+    padding: 0;
+    font-size: large;
+}
+
+/* Add hover effect for table rows */
+.clickable-row {
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.clickable-row:hover {
+    transform: scale(1.02);
+    border-color: #3d07ff;
+}
+
+select {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.product-image {
+    width: 50px;
+    height: auto;
+}
+
+button {
+    align-self: center;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    padding: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 100px;
+    width: 150px;
+    font-size: large;
+    margin-top: 1%;
+}
+
+.category-filter {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #07f7ff;
+}
+
+img {
+    max-width: 30vh; 
+    height: 10vh;
+}
+
+.slider {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    overflow: hidden;
+}
+
+.slider-content {
+    display: flex;
+    justify-content: center; /* Center the content */
+    align-items: center; /* Center the content vertically */
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: right; /* Center the image within the slide */
+    align-items: right; /* Center the image vertically */
+}
+
+.slider-image {
+    max-width: 100%; /* Ensure the image does not exceed the container width */
+    max-height: 500px; /* Adjust the max height as needed */
+    object-fit: contain; /* Proportional scaling */
+    margin-left: 40%;
+}
+
+.product-info {
+    text-align: center;
+    padding: 10px;
+}
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev {
+    left: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+}
+
+.toggle-view-icon {
+    background-color: #00bfff; /* Блакитний фон */
+    border-radius: 10%; /* Заокруглені кути (якщо іконка кругла) */
+    padding: 10px; /* Відступи всередині для кращого вигляду */
+    transition: background-color 0.3s ease; /* Анімація зміни фону */
+    width: 50px; /* Ширина іконки */
+    height: 50px; /* Висота іконки */
+    margin-left: 92%;
+    margin-top: -3%;
+}
+
+.toggle-view-icon:hover {
+    background-color: #1e90ff; /* Трохи темніший блакитний при наведенні */
+}
+
+.filter-container {
+    margin-top: 20px;
+}
