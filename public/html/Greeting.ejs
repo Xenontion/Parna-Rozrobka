@@ -1,73 +1,225 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/instruction.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Інструкція</title>
+  <link rel="stylesheet" href="css/instruction.css" />
+  <style>
+    .hide-on-auth {
+      display: none;
+    }
+
+    .instruction-icon {
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .instruction-icon:hover {
+      transform: scale(1.2);
+      z-index: 10;
+      position: relative;
+    }
+
+    /* Стилі для модального вікна */
+    #imageModal {
+      position: fixed;
+      display: none;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #imageModal img {
+      max-width: 90vw;
+      max-height: 90vh;
+      box-shadow: 0 0 15px white;
+      border-radius: 8px;
+    }
+
+    #closeModal {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .intro-text {
+        font-size: 1.4em; /* Збільшений розмір шрифту для помітності */
+        margin: 30px auto; /* Збільшені верхній/нижній відступи, auto для горизонтального центрування */
+        padding: 20px 30px; /* Додано внутрішні відступи для кращого візуального простору */
+        color: #2c3e50; /* Темніший, більш професійний колір */
+        max-width: 800px;
+        text-align: center; /* Вирівнювання тексту по центру */
+        border-left: 6px solid #ffffff; /* Виразний лівий бордюр для автентичного вигляду */
+        border-radius: 8px; /* Трохи заокруглені кути */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легка тінь для глибини */
+        line-height: 1.6; /* Покращена читабельність */
+    }
+    h2{
+        font-size: 1.8em; /* Збільшений розмір заголовка */
+        color: #2980b9; /* Колір заголовка */
+        margin-top: 20px; /* Відступ зверху */
+        text-align: center; /* Центрування заголовка */
+    }
+</style>
 </head>
+
 <body>
-    <header>
-        <img src="../icons/logo.svg" alt="Logo" class="header-logo">
-        <h1>Товари Нацонального Кешбеку</h1>
-        <nav>
-            <ul>
-                <li><a href="/products">Список продуктів</a></li>
-                <li><a href="/register">Реєстрація товару</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h2>Інструкція:</h2>
-        <ul>
-            <li>
-                <p>Для перегляду інформації про компанію, наведіться мишкою на рядок з товаром, інормація про виробника якого вас цікавить, та <b>натисніть на збільшений рядок.</b></p>
-            </li>
-            <li>
-                <p>Щоб перейти на сторінку виробника натисніть на <b>назву компанії</b> на сайті з інформацією про компанію.</p>
-            </li>
-            <li>
-                <p>Для повернення до списку продуктів, натисніть кнопку <b>"Назад"</b>.</p>
-            </li>
-            <li>
-                <p>Для фільтрації продуктів за категорією, <b>виберіть категорію в списку категорій.</b></p>
-            </li>
-            <li>
-                <p>Для перегляду інформації про авторів, <b>прокрутіть сторінку вниз.</b></p>
-            </li>
-            <li>
-                <p>Щоб видалити продукт <b>натисніть кнопку видалити в таблиці. УВАГА НЕ НАТИСКАЙТЕ ВИДАЛИТИ, ЯКЩО НЕ ХОЧЕТЕ ВИДАЛЕННЯ ТОВАРУ</b></p>
-            </li>
-            <li>
-                <p>
-                    Для реєстрації нового товару, перейдіть на сторінку <b>"Реєстрація товару"</b> та заповніть всі поля форми.
-                </p>
-            </li>
-            <li>
-                <p>
-                    Для зміни зовнішнього вигляду сайту з продуктами з таблиці на слайдер, <b>натисність на зображення слайдеру біля фільтру. Та навпаки на картинку таблиці при виді слайдеру.</b>                
-                </p>
-            </li>
-            <li>
-                <p>
-                    Для переходу на сторінку з продуктами, <b>натисніть "Список продуктів"</b>
-                </p>
-            </li>
-        </ul>
-        <button onclick="redirectToProducts()">Перейти до списку продуктів</button>
-    </main>
-    <footer>
-        <h2>Автори</h2>
-        <ul>
-            <li>Перепьолкін Олександр - <a href="mailto:oleksandr@gmail.com">oleksandr@gmail.com</a> - +380 93 163 5886</li>
-            <li>Сасько Олег - <a href="mailto:olesasko@gmail.com">olesasko@gmail.com</a> - +380 68 994 2055</li>
-        </ul>
-    </footer>
-    <script>
-        function redirectToProducts() {
-            window.location.href = '/products';
+  <header>
+    <img src="../icons/logo.svg" alt="Logo" class="header-logo" />
+    <h1>Товари Національного Кешбеку</h1>
+    <nav>
+      <ul>
+        <li><a href="/products">Список продуктів</a></li>
+        <li><a href="/register">Реєстрація товару</a></li>
+        <li id="register-user-link-header"><a href="/register_user">Реєстрація</a></li>
+        <% if (userType) { %>
+          <li><a href="/logout">Вийти</a></li>
+        <% } else { %>
+          <li><a href="/login">Логін</a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h3 class="intro-text">Ласкаво просимо на офіційний портал Національного Кешбеку — платформи, де ви можете переглядати й реєструвати товари(при умові що ви компанія), що беруть участь у державній програмі повернення коштів.</h3>
+    <h2>Інструкція:</h2>
+    <ul>
+      <li>
+        <p>Наведіть на рядок з товаром і <b>натисніть</b>, щоб побачити інформацію про компанію.</p>
+        <img src="../icons/tutorial_3.png" alt="Enlarge" class="instruction-icon" />
+      </li>
+      <li>
+        <p>Натисніть на <b>назву компанії</b> на сторінці компанії для переходу.</p>
+        <img src="../icons/tutorial_2.png" alt="Company Page" class="instruction-icon" />
+      </li>
+      <li>
+        <p>Натисніть <b>"Назад"</b>, щоб повернутись до списку продуктів.</p>
+        <img src="../icons/tutorial_1.png" alt="Back Button" class="instruction-icon" />
+      </li>
+      <li>
+        <p><b>Прокрутіть сторінку вниз</b>, щоб переглянути інформацію про авторів.</p>
+        <img src="../icons/tutorial_5.png" alt="Authors Info" class="instruction-icon" />
+      </li>
+      <li>
+        <p><b>УВАГА:</b> натиснувши кнопку "Видалити", ви видалите товар!</p>
+        <img src="../icons/tutorial_6.png" alt="Delete Button" class="instruction-icon" />
+      </li>
+      <li>
+        <p>Перейдіть у <b>"Реєстрація товару"</b> та заповніть форму.</p>
+        <img src="../icons/tutorial_7.png" alt="Registration Form" class="instruction-icon" />
+      </li>
+      <li>
+        <p>Натисніть на зображення <b>слайдеру</b> або <b>таблиці</b> для зміни вигляду.</p>
+        <img src="../icons/tutorial_8.png" alt="Slider View" class="instruction-icon" />
+        <img src="../icons/tutorial_9.png" alt="Table View" class="instruction-icon" />
+      </li>
+      <li>
+        <p>Натисніть <b>"Список продуктів"</b>, щоб повернутись.</p>
+        <img src="../icons/tutorial_10.png" alt="Products List" class="instruction-icon" />
+      </li>
+      <li>
+        <p>Натисніть на <b>заголовок колонки</b> для фільтрації за назвою, масою тощо.</p>
+        <img src="../icons/tutorial_11.png" alt="Filter" class="instruction-icon" />
+      </li>
+    </ul>
+
+    <button onclick="redirectToProducts()">Перейти до списку продуктів</button>
+    <% if (userType === 'company') { %>
+      <button onclick="redirectToRegistration()" id="register-product-btn">Зареєструвати товар</button>
+    <% } %>
+  </main>
+
+  <footer>
+    <p>2025, Chdtu dev prod. Всі права збережено. Всі дані взято із публічних джерел.</p>
+    <div class="footer-links">
+      <a href="/personnel">Персонал</a>
+      <a href="/license">Ліцензія</a>
+      <a href="https://madeinukraine.gov.ua/national-cashback">
+        <img src="../icons/logo.svg" alt="Національний кешбек" class="footer-logo" />
+      </a>
+    </div>
+  </footer>
+
+  <!-- Модальне вікно для повноекранного перегляду -->
+  <div id="imageModal">
+    <span id="closeModal">&times;</span>
+    <img id="modalImage" alt="Expanded" />
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const userType = "<%= userType %>";
+      const registerUserLinkHeader = document.getElementById('register-user-link-header');
+
+      if (userType && registerUserLinkHeader) {
+        registerUserLinkHeader.classList.add('hide-on-auth');
+      }
+
+      if (userType === 'user') {
+        const btn = document.getElementById('register-product-btn');
+        if (btn) {
+          btn.style.display = 'none';
         }
-    </script>
+      }
+
+      // Модальне вікно зображень
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      const closeModal = document.getElementById('closeModal');
+
+      document.querySelectorAll('.instruction-icon').forEach(img => {
+        img.addEventListener('click', () => {
+          modal.style.display = 'flex';
+          modalImg.src = img.src;
+          modalImg.alt = img.alt;
+        });
+      });
+
+      closeModal.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modal.style.display = 'none';
+        modalImg.src = '';
+      });
+
+      modal.addEventListener('click', () => {
+        modal.style.display = 'none';
+        modalImg.src = '';
+      });
+    });
+
+    function redirectToProducts() {
+      window.location.href = '/products';
+    }
+
+    async function redirectToRegistration() {
+      try {
+        const response = await fetch('/register', { method: 'HEAD' });
+        if (response.ok) {
+          window.location.href = '/register';
+        } else {
+          alert('Ви не маєте прав для доступу до цієї сторінки. Ця функція доступна тільки для представників компаній.');
+        }
+      } catch (error) {
+        alert('Сталася помилка при спробі доступу до сторінки реєстрації.');
+      }
+    }
+  </script>
 </body>
+
 </html>

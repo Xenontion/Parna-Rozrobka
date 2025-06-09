@@ -1,182 +1,199 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Список продуктів</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        .hide-on-auth {
+            display: none;
+        }
+
+        .filters-container div {
+            margin-bottom: 1rem;
+        }
+
+        .filters-container form label {
+            display: block; 
+            margin-bottom: 0.5rem;
+        }
+
+        .filters-container form div > label:first-child:not(:has(input[type="checkbox"])) {
+            margin-bottom: 0.8rem;
+            font-weight: bold;
+        }
+
+        .slider button:disabled,
+        .slider input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #register-product-btn {
+            white-space: nowrap;
+            display: inline;
+        }
+
+        .editable-field {
+            border: 1px solid #ccc;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .edit-button {
+            width: auto;
+            min-width: fit-content;
+            overflow: visible;
+            white-space: nowrap;
+        }
+
+        .actions-cell button {
+            margin-right: 5px;
+            white-space: nowrap; 
+        }
+    </style>
 </head>
 <body>
     <header>
         <img src="../icons/logo.svg" alt="Logo" class="header-logo">
-        <h1>Список продуктів що підтримують Національний Кешбек</h1>
-        <ul>
-            <li><a href="/">Інструкція</a></li>
-            <li><a href="/register">Реєстрація товару</a></li>
-        </ul>
+        <h1>Товари Національного Кешбеку</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Інструкція</a></li>
+                <li><a href="/register_product" id="register-product-btn" class="btn btn-primary">Реєстрація товару</a></li>
+                <% if (userType) { %>
+                    <li class="hide-on-auth"><a href="/register_user">Реєстрація</a></li>
+                    <li><a href="/logout">Вийти</a></li>
+                <% } else { %>
+                    <li><a href="/register_user">Реєстрація</a></li>
+                    <li><a href="/login">Логін</a></li>
+                <% } %>
+            </ul>
+        </nav>
     </header>
     <main>
-        <div class="filter-container">
-            <label for="category-filter">Фільтр по категоріям:</label>
-            <select id="category-filter">
-                <option value="all">Все</option>
-                <option value="Сосиски">Сосиски</option>
-                <option value="Газирований напій">Газирований напій</option>
-                <option value="Консерви">Консерви</option>
-                <option value="Пельмені">Пельмені</option>
-                <option value="Масло">Масло</option>
-            </select>
-        </div>
-        <img id="toggle-view" src="icons/slide.png" alt="Toggle View" class="toggle-view-icon">
-        <img id="toggle-view-slider" src="icons/table.png" alt="Toggle View" class="toggle-view-icon" style="display: none;">
-        <div id="table-view">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Зображення</th>
-                        <th>Назва продукту</th>
-                        <th>Ціна</th>
-                        <th>Кількість</th>
-                        <th>Категорія</th>
-                        <th>Штрих код товару</th>
-                        <th>Дії</th>
-                    </tr>
-                </thead>
-                <tbody id="product-table-body">
-                    <% products.forEach(product => { %>
-                    <tr class="clickable-row" data-href="/<%= product.manufacturer %>" data-category="<%= product.category %>">
-                        <td><img src="<%= product.images %>" alt="<%= product.name %>" class="product-image"></td>
-                        <td><%= product.name %></td>
-                        <td><%= product.price %></td>
-                        <td><%= product.quantity %></td>
-                        <td><%= product.category %></td>
-                        <td><%= product.bar_code %></td>
-                        <td><button class="delete-button" data-id="<%= product.id %>">Видалити</button></td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
-        <div id="slider-view" style="display: none;">
-            <div class="slider">
-                <button class="prev">❮</button>
-                <div class="slider-content">
-                    <% products.forEach(product => { %>
-                    <div class="slide">
-                        <a href="<%= product.manufacturer %>">
-                            <img src="<%= product.images %>" alt="<%= product.name %>" class="slider-image">
-                        </a>
-                        <div class="product-info">
-                            <h3><%= product.name %></h3>
-                            <p>Ціна: <%= product.price %></p>
-                            <p>Кількість: <%= product.quantity %></p>
-                            <p>Категорія: <%= product.category %></p>
-                            <p>Штрих код товару: <%= product.bar_code %></p>
-                            <p>Виробник: <%= product.manufacturer %></p>
-                        </div>
-                    </div>
-                    <% }) %>
-                </div>
-                <button class="next">❯</button>
+        <div class="view-toggle-row">
+            <div class="filters-toggle-btn" id="filters-toggle-btn" title="Фільтри">
+                <img src="icons/filter-svgrepo-com.svg" alt="Фільтри" style="width:32px;height:32px;">
+                <span id="filters-toggle-text"></span>
+            </div>
+            <div class="view-toggle-container">
+                <a href="/slider">
+                    <img id="toggle-view" src="icons/slideshow-3-svgrepo-com.svg" alt="Toggle View" class="toggle-view-icon">
+                </a>
             </div>
         </div>
+        <div class="content-row" id="content-row" style="align-items: flex-start;">
+            <div class="filters-container" id="filters-container" style="margin-top: 56px;">
+                <form id="filters-form">
+                    <div>
+                        <label>Категорія:</label>
+                        <%
+                            const categories = [...new Set(products.map(p => p.category))];
+                        %>
+                        <% categories.forEach(category => { %>
+                            <label>
+                                <input type="checkbox" name="category" value="<%= category %>">
+                                <%= category %>
+                            </label>
+                        <% }) %>
+                    </div>
+                    <div>
+                        <label>Виробник:</label>
+                        <%
+                            const manufacturers = [...new Set(products.map(p => p.manufacturer))];
+                        %>
+                        <% manufacturers.forEach(manufacturer => { %>
+                            <label>
+                                <input type="checkbox" name="manufacturer" value="<%= manufacturer %>">
+                                <%= manufacturer %>
+                            </label>
+                        <% }) %>
+                    </div>
+                    <div>
+                        <label for="priceFrom">Ціна від:</label>
+                        <input type="number" id="priceFrom" name="priceFrom" min="0" value="0"> грн
+                    </div>
+                    <div>
+                        <label for="priceTo">Ціна до:</label>
+                        <input type="number" id="priceTo" name="priceTo" max="<%= Math.max(...products.map(p => p.price)) %>" value="<%= Math.max(...products.map(p => p.price)) %>"> грн
+                    </div>
+                </form>
+            </div>
+            <div class="table-container" id="table-container">
+                <div id="table-view">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Пошук товару за назвою...">
+                    </div>
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th class="no-sort">Зображення</th>
+                                <th data-sort="name" data-type="text">Назва продукту</th>
+                                <th data-sort="price" data-type="number">Ціна</th>
+                                <th data-sort="quantity" data-type="number">Маса</th>
+                                <th data-sort="category" data-type="text">Категорія</th>
+                                <th data-sort="manufacturer" data-type="text">Виробник</th>
+                                <th class="no-sort">Штрих-код</th>
+                                <th class="no-sort">Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table-body">
+                            <% products.forEach(function(product, idx) { %>
+                            <tr class="product-row" data-name="<%= product.name.toLowerCase() %>" data-id="<%= product.id %>" data-index="<%= idx %>">
+                                <td><img src="<%= product.images %>" alt="<%= product.name %>" class="product-image"></td>
+                                <td data-name="<%= product.name %>">
+                                    <a href="/manufacturer/<%= product.manufacturer %>" class="product-name-link product-field" data-field="name">
+                                        <%= product.name %>
+                                    </a>
+                                </td>
+                                <td data-price="<%= product.price %>" class="product-field" data-field="price"><%= product.price %> грн</td>
+                                <td data-quantity="<%= product.quantity %>" class="product-field" data-field="quantity"><%= product.quantity %></td>
+                                <td data-category="<%= product.category %>" class="product-field" data-field="category"><%= product.category %></td>
+                                <td data-manufacturer="/manufacturer/<%= product.manufacturer %>" class="product-field" data-field="manufacturer">
+                                    <a href="/manufacturer/<%= product.manufacturer %>" class="manufacturer-link">
+                                        <%= product.manufacturer %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="barcode-container">
+                                        <svg class="barcode" data-value="<%= product.bar_code %>"></svg>
+                                        <div class="barcode-number product-field" data-field="bar_code"><%= product.bar_code %></div>
+                                    </div>
+                                </td>
+                                <td class="actions-cell">
+                                    <% if (userType === 'company' && userLogin === product.manufacturer) { %>
+                                        <button class="edit-button" data-id="<%= product.id %>">Редагувати</button>
+                                        <button class="delete-button" data-id="<%= product.id %>">Видалити</button>
+                                    <% } %>
+                                    <button class="details-button" onclick="goToSlider('<%= product.id %>')">Детальніше</button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="slider-view" style="display:none;"></div>
+            </div>
+        </div>
+        <div class="pagination" id="pagination" style="display: flex; justify-content: center; gap: 8px; margin: 24px 0;"></div>
     </main>
     <footer>
-        <h2>Автори</h2>
-        <ul>
-            <li>Перепьолкін Олександр - <a href="mailto:oleksandr@gmail.com">oleksandr@gmail.com</a> - +380 93 163 5886</li>
-            <li>Сасько Олег - <a href="mailto:olesasko@gmail.com">olesasko@gmail.com</a> - +380 68 994 2055</li>
-        </ul>
+        <p>2025, Chdtu dev prod. Всі права збережено. Всі дані взято із публічних джерел.</p>
+        <div class="footer-links">
+            <a href="/personnel">Персонал</a>
+            <a href="/license">Ліцензія</a>
+            <a href="https://madeinukraine.gov.ua/national-cashback"><img src="../icons/logo.svg" alt="Національний кешбек" class="footer-logo"></a>
+        </div>
     </footer>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var rows = document.querySelectorAll(".clickable-row");
-            rows.forEach(function(row) {
-                row.addEventListener("click", function() {
-                    window.location.href = row.dataset.href;
-                });
-            });
-
-            var filter = document.getElementById("category-filter");
-            filter.addEventListener("change", function() {
-                var selectedCategory = filter.value;
-                rows.forEach(function(row) {
-                    if (selectedCategory === "all" || row.dataset.category === selectedCategory) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-            });
-
-            var deleteButtons = document.querySelectorAll(".delete-button");
-            deleteButtons.forEach(function(button) {
-                button.addEventListener("click", function(event) {
-                    event.stopPropagation();
-                    var productId = button.dataset.id;
-                    fetch(`/delete-product/${productId}`, {
-                        method: 'DELETE'
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            button.closest("tr").remove();
-                        } else {
-                            alert("Помилка при видаленні товару");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error deleting product:", error);
-                        alert("Помилка при видаленні товару");
-                    });
-                });
-            });
-
-            var toggleViewButton = document.getElementById("toggle-view");
-            var toggleViewSliderButton = document.getElementById("toggle-view-slider");
-            var tableView = document.getElementById("table-view");
-            var sliderView = document.getElementById("slider-view");
-
-            toggleViewButton.addEventListener("click", function() {
-                tableView.style.display = "none";
-                sliderView.style.display = "block";
-                toggleViewButton.style.display = "none";
-                toggleViewSliderButton.style.display = "inline";
-            });
-
-            toggleViewSliderButton.addEventListener("click", function() {
-                tableView.style.display = "block";
-                sliderView.style.display = "none";
-                toggleViewButton.style.display = "inline";
-                toggleViewSliderButton.style.display = "none";
-            });
-
-            var slides = document.querySelectorAll(".slide");
-            var currentSlide = 0;
-
-            function showSlide(index) {
-                slides.forEach((slide, i) => {
-                    slide.style.display = i === index ? "block" : "none";
-                });
-            }
-
-            document.querySelector(".prev").addEventListener("click", function() {
-                currentSlide = (currentSlide > 0) ? currentSlide - 1 : slides.length - 1;
-                showSlide(currentSlide);
-            });
-
-            document.querySelector(".next").addEventListener("click", function() {
-                currentSlide = (currentSlide < slides.length - 1) ? currentSlide + 1 : 0;
-                showSlide(currentSlide);
-            });
-
-            showSlide(currentSlide);
-        });
-
-        function redirectToHome() {
-            window.location.href = '/';
+        function goToSlider(productId) {
+            window.location.href = `/slider?productId=${productId}`;
         }
     </script>
+    <script src="../javascript/products.js"></script>
 </body>
 </html>

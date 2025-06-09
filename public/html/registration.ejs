@@ -18,43 +18,87 @@
     </header>
     <main>
         <form action="/register-product" method="POST">
-            <div>
-                <label for="name">Назва продукту:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div>
-                <label for="price">Ціна:</label>
-                <input type="text" id="price" name="price" required>
-            </div>
-            <div>
-                <label for="quantity">Кількість:</label>
-                <input type="text" id="quantity" name="quantity" required>
-            </div>
-            <div>
-                <label for="category">Категорія:</label>
-                <input type="text" id="category" name="category" required>
-            </div>
-            <div>
-                <label for="bar_code">Штрих код товару:</label>
-                <input type="text" id="bar_code" name="bar_code" required>
-            </div>
-            <div>
-                <label for="manufacturer">Виробник:</label>
-                <input type="text" id="manufacturer" name="manufacturer" required>
-            </div>
-            <div>
-                <label for="images">Зображення (URL):</label>
-                <input type="text" id="images" name="images" required>
-            </div>
-            <button type="submit">Зареєструвати товар</button>
-        </form>
+    <div>
+        <label for="name">Назва продукту:</label>
+        <input type="text" id="name" name="name" required placeholder="Наприклад: Молоко 2%" title="Введіть повну назву товару">
+    </div>
+    <div>
+        <label for="price">Ціна (грн):</label>
+        <input type="number" id="price" name="price" required min="0" max="100000" step="1" placeholder="Наприклад: 79" title="Вкажіть ціну в гривнях без копійок">
+    </div>
+    <div>
+        <label for="quantity">Кількість:</label>
+        <div class="quantity-container">
+            <input type="number" id="quantity" name="quantity" required min="1" max="100000" placeholder="Наприклад: 500" title="Вкажіть кількість (наприклад, 1000)">
+            <select id="unit" name="unit" required title="Оберіть одиницю виміру">
+                <option value="">Оберіть одиницю</option>
+                <option value="г">грам (г)</option>
+                <option value="л">літр (л)</option>
+                <option value="шт">штук (шт)</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <label for="category">Категорія:</label>
+        <select id="category" name="category" required title="Оберіть категорію з наявного списку">
+            <option value="">Оберіть категорію</option>
+            <% if (locals.categories && Array.isArray(locals.categories) && locals.categories.length > 0) {
+                locals.categories.forEach(function(category) { %>
+                    <option value="<%= category.name %>"><%= category.name %></option>
+                <% });
+            } %>
+        </select>
+    </div>
+    <div>
+        <label for="bar_code">Штрих-код товару:</label>
+        <input type="text" id="bar_code" name="bar_code" required pattern="^[0-9]{8,13}$" title="Штрих-код має містити 8–13 цифр" placeholder="Наприклад: 4821234567890">
+    </div>
+    <div>
+        <label for="manufacturer">Виробник:</label>
+        <input type="text" id="manufacturer" name="manufacturer" required placeholder="ТОВ 'Молоковиробник'" title="Вкажіть точну назву виробника">
+    </div>
+    <div>
+        <label for="images">Зображення (URL):</label>
+        <input type="url" id="images" name="images" required placeholder="https://example.com/image.jpg" title="Введіть дійсну URL-адресу зображення">
+    </div>
+    <button type="submit">Зареєструвати товар</button>
+</form>
     </main>
     <footer>
-        <h2>Автори</h2>
-        <ul>
-            <li>Перепьолкін Олександр - <a href="mailto:oleksandr@gmail.com">oleksandr@gmail.com</a> - +380 93 163 5886</li>
-            <li>Сасько Олег - <a href="mailto:olesasko@gmail.com">olesasko@gmail.com</a> - +380 68 994 2055</li>
-        </ul>
+        <p> 2025, Chdtu dev prod. Всі права збережено. Всі дані взято із публічних джерел.</p>
+        <div class="footer-links">
+            <a href="/personnel">Персонал</a>
+            <a href="/license">Ліцензія</a>
+            <a href="https://madeinukraine.gov.ua/national-cashback"><img src="../icons/logo.svg" alt="Національний кешбек" class="footer-logo"></a>
+        </div>
     </footer>
+    <script>
+        // Додаткова валідація для поля штрих-коду
+        document.getElementById('bar_code').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (!/^[0-9]*$/.test(value)) {
+                e.target.value = value.replace(/[^0-9]/g, '');
+                alert('Штрих-код може містити тільки цифри!');
+            }
+        });
+
+        // Валідація для поля ціни
+        document.getElementById('price').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (!/^[0-9]*$/.test(value)) {
+                e.target.value = value.replace(/[^0-9]/g, '');
+                alert('Ціна може містити тільки цифри!');
+            }
+        });
+
+        // Валідація для поля кількості
+        document.getElementById('quantity').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (!/^[0-9]*$/.test(value)) {
+                e.target.value = value.replace(/[^0-9]/g, '');
+                alert('Кількість може містити тільки цифри!');
+            }
+        });
+    </script>
 </body>
 </html>

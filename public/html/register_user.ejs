@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Реєстрація</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .register-container {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .form-header h2 {
+      margin: 0 0 0.5rem;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    small {
+      display: block;
+      margin-top: 0.2rem;
+      color: #6c757d;
+      font-size: 0.85rem;
+    }
+    input:focus, select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 3px rgba(0,123,255,0.25);
+      outline: none;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1rem;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .error-message, .success-message {
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+      display: none;
+    }
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .login-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .company-fields {
+      display: none;
+      background-color: #f1f1f1;
+      padding: 1rem;
+      border-radius: 4px;
+      border-left: 4px solid #007bff;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="form-header">
+      <h2>Створити обліковий запис</h2>
+      <p>Заповніть форму нижче</p>
+    </div>
+
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="type">Тип облікового запису:</label>
+        <select id="type" name="type" required>
+          <option value="">Оберіть тип</option>
+          <option value="user">Користувач</option>
+          <option value="company">Компанія</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="login">Логін:</label>
+        <input type="text" id="login" name="login" required minlength="4" maxlength="32"
+               placeholder="Введіть логін (4-32 символи)"
+               title="Логін повинен бути від 4 до 32 символів">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Електронна пошта:</label>
+        <input type="email" id="email" name="email" required placeholder="example@email.com">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required minlength="6"
+               placeholder="Мінімум 6 символів">
+        <small>Пароль повинен містити не менше 6 символів</small>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Підтвердження паролю:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required
+               placeholder="Повторіть пароль">
+      </div>
+
+      <div id="companyFields" class="company-fields">
+        <div class="form-group">
+          <label for="companyName">Назва компанії:</label>
+          <input type="text" id="companyName" name="companyName" 
+                 placeholder="ТОВ 'Назва'" title="Офіційна назва компанії">
+        </div>
+        <div class="form-group">
+          <label for="companyAddress">Адреса компанії:</label>
+          <input type="text" id="companyAddress" name="companyAddress"
+                 placeholder="м. Київ, вул. Прикладна, 1">
+        </div>
+        <div class="form-group">
+          <label for="companyPhone">Телефон компанії:</label>
+          <input type="tel" id="companyPhone" name="companyPhone"
+                 pattern="^\+?[0-9\s\-]{7,15}$"
+                 placeholder="+380XXXXXXXXX"
+                 title="Введіть номер телефону в міжнародному форматі">
+        </div>
+      </div>
+
+      <button type="submit">Зареєструватися</button>
+    </form>
+
+    <div class="login-link">
+      Вже зареєстровані? <a href="/login">Увійти</a>
+    </div>
+  </div>
+
+  <script>
+    const typeSelect = document.getElementById('type');
+    const companyFields = document.getElementById('companyFields');
+    const registerForm = document.getElementById('registerForm');
+    const errorBox = document.getElementById('errorMessage');
+    const successBox = document.getElementById('successMessage');
+
+    typeSelect.addEventListener('change', () => {
+      const inputs = companyFields.querySelectorAll('input');
+      if (typeSelect.value === 'company') {
+        companyFields.style.display = 'block';
+        inputs.forEach(input => input.required = true);
+      } else {
+        companyFields.style.display = 'none';
+        inputs.forEach(input => input.required = false);
+      }
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirmPassword').value;
+
+      if (password !== confirm) {
+        return showError('Паролі не збігаються');
+      }
+
+      if (password.length < 6) {
+        return showError('Пароль повинен містити щонайменше 6 символів');
+      }
+
+      const formData = {
+        type: typeSelect.value,
+        login: document.getElementById('login').value,
+        email: document.getElementById('email').value,
+        password: password,
+      };
+
+      if (typeSelect.value === 'company') {
+        formData.companyName = document.getElementById('companyName').value;
+        formData.companyAddress = document.getElementById('companyAddress').value;
+        formData.companyPhone = document.getElementById('companyPhone').value;
+      }
+
+      try {
+        const res = await fetch('/api/register_user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message);
+        
+        showSuccess('Реєстрація успішна! Перенаправлення...');
+        registerForm.reset();
+        setTimeout(() => window.location.href = '/login', 3000);
+
+      } catch (err) {
+        showError(err.message || 'Помилка при реєстрації');
+      }
+    });
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSuccess(msg) {
+      successBox.textContent = msg;
+      successBox.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

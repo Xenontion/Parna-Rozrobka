@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Слайдер товарів</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+    }
+
+    header nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
+    }
+
+    header nav ul li {
+      margin: 0;
+    }
+
+    header nav ul li a,
+    header nav ul li .btn {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .slider-view {
+      position: relative;
+      overflow: hidden;
+      padding: 2rem 1rem;
+    }
+
+    .slider-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      gap: 1rem;
+    }
+
+    .product-card {
+      min-width: 300px;
+      max-width: 300px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      flex-shrink: 0;
+      height: 600px;
+      transition: outline 0.3s ease-in-out;
+    }
+
+    .product-card.active {
+      outline: 3px solid #ff9800;
+    }
+
+    .product-card img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    #prevSlide,
+    #nextSlide {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+      z-index: 1000;
+      user-select: none;
+    }
+
+    #prevSlide {
+      left: 10px;
+    }
+
+    #nextSlide {
+      right: 10px;
+    }
+
+    .view-toggle-row{
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-view-icon {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: block;
+    }
+
+    .slider-input-container {
+      text-align: center;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+
+    .slider-input-container label {
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+
+    .slider-input-container input[type=number] {
+      width: 60px;
+      padding: 0.3rem 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    #totalProducts {
+      margin-left: 0.5rem;
+      font-weight: normal;
+      color: #555;
+      font-size: 1rem;
+      vertical-align: middle;
+    }
+
+    footer {
+      text-align: center;
+      background: linear-gradient(to right, #ffd700, #ffcc00);
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .manufacturer-btn {
+        display: inline-block;
+        margin-top: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+        color: white;
+        background-color: #2196F3;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .manufacturer-btn:hover {
+        background-color: #1976D2;
+    }
+
+    /* Кнопки Редагувати та Видалити */
+    .edit-button, .delete-button {
+      display: inline-block;
+      margin: 0.5rem 0.25rem;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .edit-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .edit-button:hover {
+      background-color: #388E3C;
+    }
+
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .delete-button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <header>
+        <img src="../icons/logo.svg" alt="Logo" class="header-logo">
+        <h1>Товари Національного Кешбеку</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Інструкція</a></li>
+                <li><a href="/register_product" id="register-product-btn" class="btn btn-primary">Реєстрація товару</a></li>
+                <% if (userType) { %>
+                    <li><a href="/logout">Вийти</a></li>
+                <% } else { %>
+                    <li><a href="/register_user">Реєстрація</a></li>
+                    <li><a href="/login">Логін</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </header>
+
+  <main>
+    <div class="view-toggle-row">
+      <div class="view-toggle-container">
+          <a href="/products">
+              <img id="toggle-view-slider" src="icons/table-2-svgrepo-com.svg" alt="Toggle View" class="toggle-view-icon">
+          </a>
+      </div>
+    </div>
+
+    <% if (products && products.length > 0) { %>
+      <div class="slider-input-container">
+        <label for="productNumber">Перейти до товару №</label>
+        <input
+          type="number"
+          id="productNumber"
+          min="1"
+          max="<%= products.length %>"
+          value="1"
+          aria-label="Введіть номер товару для переходу"
+        />
+        <span id="totalProducts"></span>
+      </div>
+
+      <div class="slider-view">
+        <button id="prevSlide" aria-label="Попередній товар">←</button>
+        <div class="slider-track" id="slider-track">
+          <% products.forEach(function(product) { %>
+            <div class="product-card">
+              <img src="<%= product.images %>" alt="<%= product.name %>" />
+              <h3><%= product.name %></h3>
+              <p>Ціна: <strong><%= product.price %> грн</strong></p>
+              <p>Маса: <%= product.quantity %></p>
+              <p>Категорія: <%= product.category %></p>
+              <p>Виробник: <%= product.manufacturer %></p>
+              <svg class="barcode" data-value="<%= product.bar_code %>"></svg>
+              <a href="/manufacturer/<%= product.manufacturer %>" class="manufacturer-btn">Переглянути виробника</a>
+              <% if (userType === 'company' && userLogin === product.manufacturer) { %>
+                <button class="edit-button">Редагувати</button>
+                <button class="delete-button">Видалити</button>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+        <button id="nextSlide" aria-label="Наступний товар">→</button>
+      </div>
+    <% } else { %>
+      <p style="text-align:center; margin-top: 3rem;">Товарів не знайдено.</p>
+    <% } %>
+  </main>
+
+  <footer>
+        <p> 2025, Chdtu dev prod. Всі права збережено. Всі дані взято із публічних джерел.</p>
+        <div class="footer-links">
+            <a href="/personnel">Персонал</a>
+            <a href="/license">Ліцензія</a>
+            <a href="https://madeinukraine.gov.ua/national-cashback"><img src="../icons/logo.svg" alt="Національний кешбек" class="footer-logo"></a>
+        </div>
+    </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const track = document.getElementById("slider-track");
+      const cards = track.querySelectorAll(".product-card");
+      const prevBtn = document.getElementById("prevSlide");
+      const nextBtn = document.getElementById("nextSlide");
+      const inputNumber = document.getElementById("productNumber");
+      const totalProductsSpan = document.getElementById("totalProducts");
+
+      if (cards.length === 0) return;
+
+      totalProductsSpan.textContent = `/ ${cards.length}`;
+
+      let currentIndex = 0;
+      const gap = 16;
+      const cardWidth = cards[0].offsetWidth + gap;
+
+      function updateSlider() {
+        // Знімаємо активний клас
+        cards.forEach(card => card.classList.remove('active'));
+
+        // Встановлюємо нову позицію слайдера
+        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+
+        // Оновлюємо input
+        inputNumber.value = currentIndex + 1;
+
+        // Додаємо активний клас поточному товару
+        if (cards[currentIndex]) {
+          cards[currentIndex].classList.add('active');
+        }
+      }
+
+      prevBtn.addEventListener("click", () => {
+        if (currentIndex === 0) {
+          currentIndex = cards.length - 1;
+        } else {
+          currentIndex--;
+        }
+        updateSlider();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        if (currentIndex === cards.length - 1) {
+          currentIndex = 0;
+        } else {
+          currentIndex++;
+        }
+        updateSlider();
+      });
+
+      inputNumber.addEventListener("change", () => {
+        let val = parseInt(inputNumber.value, 10);
+        if (isNaN(val)) val = 1;
+        if (val < 1) val = 1;
+        if (val > cards.length) val = cards.length;
+
+        currentIndex = val - 1;
+        updateSlider();
+      });
+
+      JsBarcode(".barcode").init();
+
+      updateSlider();
+    });
+  </script>
+</body>
+</html>
